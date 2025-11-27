@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferta 33 - Kit de Internet Popular: Acesso Social</title>
+    <!-- Incluindo Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Configuração de Fonte Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; padding-bottom: 90px; } /* Adiciona padding para o CTA fixo */
+        .hero-bg { background-color: #e0f2fe; } /* Azul claro suave (Lighter blue for professional feel) */
+        
+        /* Estilo do Botão CTA Fixo (Agora o botão principal da página) */
+        .fixed-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2563eb; /* Azul primário */
+            z-index: 50;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .cta-button-fixed { 
+            transition: background-color 0.3s, transform 0.1s; 
+            background-color: #10b981; /* Verde esmeralda para conversão */
+            animation: pulse-shadow 2s infinite;
+        } 
+        .cta-button-fixed:hover { background-color: #059669; transform: translateY(-1px); }
+
+        /* Animação para o CTA fixo */
+        @keyframes pulse-shadow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        }
+
+        /* Estilo para o popup de Prova Social (fixo) */
+        .notification-popup {
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+            max-width: 90%;
+            bottom: 100px; /* Posição fixa acima do CTA (90px de altura) */
+            right: 20px;
+            pointer-events: none; /* Não interfere no clique */
+            backdrop-filter: blur(3px); /* Efeito de desfoque suave */
+        }
+        @media (min-width: 640px) {
+            .notification-popup {
+                max-width: 300px;
+                right: 32px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Seção Principal (Hero) -->
+    <section class="hero-bg py-12 md:py-16">
+        <div class="max-w-3xl mx-auto px-5 text-center">
+            
+            <span class="inline-block px-4 py-1 text-sm font-semibold rounded-full bg-blue-500 text-white mb-3 shadow-md">
+                PROGRAMA SOCIAL DE INCLUSÃO DIGITAL
+            </span>
+            
+            <!-- TÍTULO -->
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
+                Receba chip + modem + 20GB mensais por <span class="text-2xl align-top font-bold text-red-600">R$39,90</span>
+            </h1>
+
+            <!-- Imagem Principal: Kit Completo -->
+            <div class="mb-10 mx-auto w-full max-w-sm md:max-w-xl rounded-xl shadow-2xl border-4 border-white overflow-hidden">
+                <img src="https://i.imgur.com/vPaAPHY.jpeg" 
+                     alt="Kit Completo de Internet Popular com Modem e Chip" 
+                     class="w-full h-auto object-cover"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x300/2563eb/ffffff?text=Kit+Completo+-+Internet+Popular';">
+            </div>
+            
+            <p class="text-xs text-gray-500 mb-8">
+                O kit completo inclui modem e chip, enviados prontos para uso.
+            </p>
+
+            <!-- DESCRIÇÃO -->
+            <div class="text-left bg-white p-6 rounded-xl shadow-lg border border-blue-200">
+                <h2 class="text-xl font-bold text-blue-700 mb-3">O Programa Social Oferta 33</h2>
+                <p class="text-lg text-gray-700 mb-4">
+                    A <strong class="text-blue-600">Oferta 33</strong> é uma iniciativa oficial para garantir a inclusão digital, oferecendo acesso à internet de qualidade a famílias que se enquadram nos critérios de baixa renda.
+                </p>
+                
+                <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">Benefícios Inclusos:</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-start"><i class="fas fa-signal text-blue-500 mr-3 mt-1"></i> <span><strong class="text-gray-800">20GB de Dados</strong> mensais, renovados automaticamente.</span></li>
+                    <li class="flex items-start"><i class="fas fa-money-bill-wave text-blue-500 mr-3 mt-1"></i> <span>Pagamento único de <strong class="text-red-600">R$39,90</strong> (taxa simbólica de envio).</span></li>
+                    <li class="flex items-start"><i class="fas fa-box text-blue-500 mr-3 mt-1"></i> <span><strong class="text-gray-800">Modem e Chip</strong> inclusos no kit, enviados pelos Correios.</span></li>
+                </ul>
+                
+                <p class="mt-6 text-base font-semibold text-red-700 p-4 bg-red-100 rounded-lg border border-red-300">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> 
+                    ATENÇÃO: Este programa é válido apenas para famílias que atendem aos <strong class="underline">critérios oficiais de elegibilidade</strong> (baixa renda).
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Seção de Componentes do Kit (Roteador e Chip) -->
+    <section class="py-12">
+        <div class="max-w-5xl mx-auto px-5">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">Detalhes do Kit</h2>
+            <div class="grid md:grid-cols-3 gap-8 items-center">
+                
+                <!-- Roteador Sozinho -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-600">Modem/Roteador Portátil</h3>
+                    <div class="h-40 flex items-center justify-center">
+                         <img src="https://i.imgur.com/7MDUJH8.jpeg" 
+                             alt="Roteador sozinho do Kit de Internet Popular" 
+                             class="max-h-full w-auto object-contain rounded-lg mb-2"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x250/3b82f6/ffffff?text=Roteador';">
+                    </div>
+                </div>
+
+                <!-- Foto de Entrega -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border-2 border-green-500 text-center scale-105">
+                    <h3 class="text-lg font-bold mb-3 text-green-700">Entrega Rápida e Segura</h3>
+                    <div class="h-40 flex items-center justify-center">
+                        <img src="https://i.imgur.com/NESQchT.jpeg" 
+                             alt="Foto de entrega do Kit Internet Popular pelos Correios" 
+                             class="max-h-full w-auto object-contain rounded-lg mb-2"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x250/16a34a/ffffff?text=Entrega+Segura';">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Envio seguro pelos Correios.</p>
+                </div>
+
+                <!-- Chip de Dados -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center">
+                    <h3 class="text-lg font-semibold mb-3 text-blue-600">Chip de Dados Pré-Ativado</h3>
+                    <div class="h-40 flex items-center justify-center">
+                        <img src="https://i.imgur.com/EpNdnXD.jpeg" 
+                             alt="Chip de dados do Kit de Internet Popular" 
+                             class="max-h-full w-auto object-contain rounded-lg mb-2"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x250/065f46/ffffff?text=Chip';">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Depoimento e Comprovante -->
+    <section class="py-12 bg-gray-100">
+        <div class="max-w-5xl mx-auto px-5 grid md:grid-cols-2 gap-10">
+            
+            <!-- Depoimento -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                <h2 class="text-xl font-bold text-gray-800 mb-3">Experiência de um Beneficiado</h2>
+                <p class="italic text-gray-700 mb-4 text-lg">
+                    <i class="fas fa-quote-left text-blue-400 mr-2"></i>
+                    “Recebi em 4 dias, pluguei e funcionou imediatamente. Fez toda a diferença para o estudo dos meus filhos.”
+                </p>
+                <p class="font-semibold text-gray-900">- Usuário Beneficiado</p>
+            </div>
+
+            <!-- Comprovante -->
+            <div class="bg-white p-6 rounded-xl shadow-lg max-w-sm md:max-w-none mx-auto border-l-4 border-red-500">
+                <h2 class="text-xl font-bold text-gray-800 mb-3">Taxa Social Única de R$39,90</h2>
+                <p class="text-center text-sm font-semibold text-gray-600 mb-3">RECIBO DE PAGAMENTO - TAXA ÚNICA</p>
+                <div class="border-b border-dashed border-gray-300 mb-3"></div>
+                <div class="flex justify-between font-bold text-2xl text-gray-900 mb-1">
+                    <span>TOTAL</span>
+                    <span class="text-red-600">R$ 39,90</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500 mb-3">
+                    <span>Descrição: Taxa Social de Envio e Manutenção do Kit</span>
+                    <span>Programa Internet Popular</span>
+                </div>
+                <div class="border-t border-dashed border-gray-300 mt-3 pt-3 text-center">
+                    <p class="text-sm font-medium text-green-600">Comprovante de Pagamento da Taxa Social.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Seção de Transparência e Regulamento -->
+    <section class="py-12 bg-white" id="transparency-section">
+        <div class="max-w-3xl mx-auto px-5">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Transparência e Regulamento</h2>
+            
+            <div class="space-y-4 text-sm text-gray-700">
+                <p class="text-base font-semibold text-gray-900 p-4 rounded-lg bg-blue-50 border border-blue-200">
+                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                    O Programa Oferta 33 é de concessão limitada. Para receber o Kit, é necessário <strong class="underline">cumprir integralmente os critérios de elegibilidade</strong> estabelecidos no regulamento oficial.
+                </p>
+
+                <p>
+                    <i class="fas fa-gavel text-blue-500 mr-2"></i> 
+                    <strong class="font-semibold">Critérios e Elegibilidade:</strong> O programa é restrito a famílias que atendem aos requisitos. Clique <a href="#" class="text-blue-600 hover:underline font-medium">aqui para ler o Regulamento Completo</a> e verificar como participar.
+                </p>
+                
+                <p>
+                    <i class="fas fa-lock text-blue-500 mr-2"></i> 
+                    <strong class="font-semibold">Política de Privacidade:</strong> Sua segurança e dados são nossa prioridade. <a href="#" class="text-blue-600 hover:underline font-medium">Leia nossa Política de Privacidade</a>.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center py-4 text-gray-500 text-xs bg-gray-200">
+        Oferta 33 - Kit de Internet Popular. Programa Social de Inclusão Digital.
+    </footer>
+
+    <!-- CALL TO ACTION (CTA) FIXO NO RODAPÉ -->
+    <div class="fixed-cta py-3">
+        <div class="max-w-3xl mx-auto px-5 text-center">
+            <!-- ATUALIZADO: O link agora aponta para o formulário de checkout -->
+            <a href="checkout_pagamento.html" id="eligibility-form-fixed"
+               class="cta-button-fixed w-full md:w-auto inline-block px-10 py-3 text-lg font-bold text-white rounded-full uppercase shadow-xl">
+                <i class="fas fa-check-circle mr-3"></i> SOLICITAR MEU KIT AGORA
+            </a>
+        </div>
+    </div>
+
+
+    <script>
+        // --- LÓGICA DO POPUP DE PROVA SOCIAL ---
+        
+        const names = ['Ana C.', 'João R.', 'Maria S.', 'Pedro L.', 'Juliana F.', 'Carlos A.', 'Sandra M.', 'Rafael P.', 'Guilherme B.', 'Patricia D.'];
+        const cities = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Porto Alegre', 'Recife', 'Salvador', 'Curitiba', 'Brasília', 'Fortaleza', 'Campinas'];
+
+        function generateNotification() {
+            // Seleciona dados aleatórios
+            const name = names[Math.floor(Math.random() * names.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const time = Math.floor(Math.random() * 5) + 1; // 1 a 5 minutos atrás
+
+            const message = `${name} de ${city} acabou de solicitar o Kit.`;
+            
+            // Cria o elemento do popup
+            const notification = document.createElement('div');
+            // Estilo limpo e fixo
+            notification.className = 'notification-popup fixed bg-white/95 border border-blue-500 text-gray-800 p-3 rounded-xl shadow-2xl opacity-0 transform translate-y-full z-[100]';
+            
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3 pointer-events-auto">
+                    <!-- Ícone de usuário com check -->
+                    <i class="fas fa-user-check text-green-500 text-xl"></i> 
+                    <div>
+                        <p class="font-bold text-sm">Novo Solicitante!</p>
+                        <p class="text-xs text-gray-700">${message} (${time} min atrás)</p>
+                    </div>
+                </div>
+            `;
+
+            // Adiciona o popup diretamente ao corpo (body) para controle fixo
+            document.body.appendChild(notification);
+            
+            // 1. Mostrar (com animação)
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-y-full');
+                notification.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            // 2. Esconder e Remover
+            const displayTime = 6000; // Exibir por 6 segundos
+            setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-y-0');
+                notification.classList.add('opacity-0', 'translate-y-full');
+                
+                // Remove o elemento após a transição de saída (0.7s)
+                setTimeout(() => {
+                    notification.remove();
+                }, 700);
+            }, displayTime);
+            
+            // 3. Agendar a próxima notificação
+            // AUMENTANDO O ATRASO: 15 a 30 segundos
+            const nextDelay = Math.floor(Math.random() * 15000) + 15000; 
+            setTimeout(generateNotification, nextDelay);
+        }
+
+        // Inicia a sequência de notificações quando a janela carregar
+        window.onload = function() {
+            // Primeiro popup após 5 segundos
+            setTimeout(generateNotification, 5000); 
+        }
+
+    </script>
+</body>
+</html>
+

