@@ -140,7 +140,7 @@
         .qr-code-placeholder {
             width: 160px;
             height: 160px;
-            background-color: #444; 
+            /* Foi removido o background-color: #444 e o texto placeholder para usar a imagem */
             margin: 20px auto 15px;
             border-radius: 4px;
             display: flex;
@@ -149,6 +149,13 @@
             color: white;
             font-size: 0.9rem;
             font-weight: 500;
+        }
+        /* Novo estilo para garantir que a imagem do QR Code se ajuste */
+        .qr-code-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Garante que a imagem se ajuste sem cortar */
+            border-radius: 4px;
         }
         .pix-key-display {
             background-color: var(--card-background);
@@ -399,13 +406,16 @@
                 </div>
                 
                 <div id="pixDetails">
+                    <!-- MODIFICAÇÃO 1: Adicionando a imagem do QR Code -->
                     <div class="qr-code-placeholder">
-                        [QR Code PIX Simulado]
+                        <img src="https://i.imgur.com/4RkyrZV.png" alt="QR Code PIX" class="qr-code-image"
+                             onerror="this.onerror=null; this.src='https://placehold.co/160x160/444/FFFFFF?text=QR+Code+Indisponível';" />
                     </div>
                     <p style="color: var(--primary-color); font-weight: 600;">Pagamento identificado automaticamente</p>
                     <div class="pix-key-display">
+                        <!-- MODIFICAÇÃO 2: Novo Código PIX Copia e Cola -->
                         <span id="pixKeyText" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            00020126360014BR.GOV.BCB.PIX01140000000000000000
+                            00020101021226820014br.gov.bcb.pix2560qrcode.pagsm.com.br/pix/f22bd23f-4026-4c21-b65e-1861730821225204000053039865802BR5909Jajajjjsj6009Aracatuba62070503***63046E08
                         </span>
                         <button type="button" class="copy-btn" onclick="copyPixKey()">Copiar</button>
                     </div>
@@ -442,14 +452,14 @@
         <p style="font-weight: 600; color: var(--text-color); margin-bottom: 15px;">Nenhuma cobrança foi realizada.</p>
         <p>Por favor, tente novamente ou escolha outra forma de pagamento.</p>
         
-        <!-- BOTÃO PRIMÁRIO (Azul): TENTAR NOVAMENTE (Volta ao Formulário de Pagamento) -->
+        <!-- BOTÃO PRIMÁRIO (Azul): TENTAR NOVAMENTE (AGORA REDIRECIONA) -->
         <button type="button" class="cta-button" 
                 style="max-width: 280px; margin-top: 30px; background-color: #007bff;"
                 onclick="retryPayment()">
             Tentar Novamente
         </button>
 
-        <!-- BOTÃO SECUNDÁRIO (Cinza): ESCOLHER OUTROS MÉTODOS (Redireciona/Gateway) -->
+        <!-- BOTÃO SECUNDÁRIO (Cinza): ESCOLHER OUTROS MÉTODOS (AGORA REDIRECIONA) -->
         <button type="button" class="cta-button" 
                 style="max-width: 280px; margin-top: 15px; background-color: #6c757d;"
                 onclick="redirectToGateway()">
@@ -459,6 +469,10 @@
 
 
     <script type="module">
+        // --- Constantes de Configuração ---
+        // MODIFICAÇÃO 3: URL de Redirecionamento da página de checkout (Usada em retryPayment e redirectToGateway)
+        const CHECKOUT_REDIRECT_URL = 'https://app.evopay.cash/checkout/cmiiir3np00knaho7qj4ytvpn';
+        
         // --- Importações e Inicialização do Firebase ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -770,25 +784,21 @@
         
         /**
          * Lógica de Tentar Novamente (Botão Azul): 
-         * Esconde o modal de falha e retorna o usuário à seção de pagamento.
+         * MODIFICAÇÃO 4: Redireciona para o novo link de checkout.
          */
         window.retryPayment = function() {
-            failureOverlay.style.display = 'none';
-            document.getElementById('paymentFormSection').style.opacity = 1;
-            clearMessage('payment');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log("Redirecionando para a página de checkout...");
+            window.location.href = CHECKOUT_REDIRECT_URL;
         }
 
 
         /**
-         * Redireciona para o Gateway de Pagamento (Botão Cinza - Simulação)
+         * Redireciona para o Gateway de Pagamento (Botão Cinza)
+         * MODIFICAÇÃO 5: Redireciona para o novo link de checkout.
          */
         window.redirectToGateway = function() { 
-            failureOverlay.style.display = 'none';
-            // Simulação de redirecionamento
-            console.log("Redirecionando para o gateway de pagamento...");
-            document.getElementById('paymentFormSection').style.opacity = 1;
-            // Aqui você pode adicionar um window.location.href = '/outra-pagina'
+            console.log("Redirecionando para a página de checkout...");
+            window.location.href = CHECKOUT_REDIRECT_URL;
         }
 
 
